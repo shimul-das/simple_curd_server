@@ -38,6 +38,12 @@ async function run() {
 
         //another database and collection create part
         const UserCollection=client.db("userDB").collection("users")
+        app.get('/user', async(req, res) => {
+            const cursor=UserCollection.find();
+            const result = await cursor.toArray()
+            res.send(result);
+
+        })
         
         app.post('/user', async(req, res) => {
             const user = req.body;
