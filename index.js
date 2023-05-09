@@ -13,7 +13,8 @@ app.use(express.json())
 
 const {
     MongoClient,
-    ServerApiVersion
+    ServerApiVersion,
+    ObjectId
 } = require('mongodb');
 const uri = "mongodb+srv://shimul191002110:EAGewiXDbfqodLnH@cluster0.6g3butq.mongodb.net/?retryWrites=true&w=majority";
 
@@ -49,6 +50,13 @@ async function run() {
             const user = req.body;
             console.log("new user",user);
             const result = await UserCollection.insertOne(user);
+            res.send(result)
+        })
+        app.delete('/user/:id',async(req,res)=>{
+            const id=req.params.id;
+            console.log("delete form database",id)
+            const query = { _id: new ObjectId(id) };
+            const result = await UserCollection.deleteOne(query);
             res.send(result)
         })
 
