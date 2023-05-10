@@ -38,30 +38,49 @@ async function run() {
 
 
         //another database and collection create part
-        const UserCollection=client.db("userDB").collection("users")
-        app.get('/user', async(req, res) => {
-            const cursor=UserCollection.find();
+        const UserCollection = client.db("userDB").collection("users")
+        app.get('/user', async (req, res) => {
+            const cursor = UserCollection.find();
             const result = await cursor.toArray()
             res.send(result);
 
         })
-        app.get('/user/:id',async(req,res)=>{
-            const id=req.params.id;
-            const query={_id: new ObjectId(id)}
+        app.get('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = {
+                _id: new ObjectId(id)
+            }
             const result = await UserCollection.findOne(query)
             res.send(result);
         })
-        
-        app.post('/user', async(req, res) => {
+        app.put('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            const user=req.body;
+            console.log(id, user)
+            const filter={_id:new ObjectId(id)}
+            const options={upsert:true}
+            const updateUser={
+                $set:{
+                    name:user.name,
+                    email:user.email,
+                }
+            }
+            const result=await UserCollection.updateOne(filter,updateUser,options)
+            res.send(result)
+        })
+
+        app.post('/user', async (req, res) => {
             const user = req.body;
-            console.log("new user",user);
+            console.log("new user", user);
             const result = await UserCollection.insertOne(user);
             res.send(result)
         })
-        app.delete('/user/:id',async(req,res)=>{
-            const id=req.params.id;
-            console.log("delete form database",id)
-            const query = { _id: new ObjectId(id) };
+        app.delete('/user/:id', async (req, res) => {
+            const id = req.params.id;
+            console.log("delete form database", id)
+            const query = {
+                _id: new ObjectId(id)
+            };
             const result = await UserCollection.deleteOne(query);
             res.send(result)
         })
